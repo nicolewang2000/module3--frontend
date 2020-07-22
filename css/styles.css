@@ -1,1 +1,85 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700');
+
+body {
+    font-family: 'Source Sans Pro';
+}
+
+.stars-outer {
+    display: inline-block;
+    position: relative;
+    font-family: FontAwesome;
+}
+.stars-outer::before {
+    content: "\f006 \f006 \f006 \f006 \f006";
+    font-size: 25px;
+}
+.stars-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 0;
+}
+.stars-inner::before {
+    content: "\f005 \f005 \f005 \f005 \f005";
+    color: #f8ce0b;
+    font-size: 25px;
+} 
+.scene {
+    width: 350px;
+    height: 455px;
+    border: 1px solid #CCC;
+    margin: 40px 40px;
+    perspective: 600px;
+}
+.card {
+    width: 100%;
+    height: 100%;
+    transition: transform 1s;
+    transform-style: preserve-3d;
+    cursor: pointer;
+    position: relative;
+}
+
+.card.is-flipped {
+    transform: rotateY(180deg);
+}
+
+.card__face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    overflow: auto;
+}
+  
+.card__face--front {
+    background: white;
+}
+  
+.card__face--back {
+    background :pink;
+    transform: rotateY(180deg);
+    padding: 15px;
+}
+  
+.card-image {
+    max-width:300px;
+    max-height:200px;
+    object-fit: contain;
+}
+#button-options {display: flex;}
+.btn-option {
+    border: 2px solid black;
+    background-color: white;
+    color: black;
+    padding: 14px 28px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+}
+  

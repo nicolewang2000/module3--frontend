@@ -3,6 +3,7 @@
 <head>
   <title>basic.html</title>
   <link rel="stylesheet" href="css/styles.css" type= "text/css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <meta charset = "UTF-8" />
 </head>
 <body>
@@ -14,9 +15,17 @@
                 <li>Login</li>
             </ul>
         </div>
-        <div id="card-container">
-
-        </div>
+       <div id="main">
+           <div id="directory">
+               <div id= "button-options">
+                    <div><button class= "btn-option" id= "find-btn" type="submit" onClick="return false;" >Find A Recipe!</button></div>
+                    <div><button class= "btn-option" id= "create-btn" type="submit" onClick="return false;" >Create One!</button></div>
+                    <div><button class= "btn-option" id= "random-btn" type="submit" onClick="return false;" >Feeling Adventurous!</button></div>
+               </div>
+               <div id="card-container">
+               </div>
+           </div>
+       </div>
     </div>
     <script src="src/script.js"></script>
 </body>
