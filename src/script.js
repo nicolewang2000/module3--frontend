@@ -1,14 +1,15 @@
+const nav = document.querySelector('ul.nav')
 const cardContainer = document.querySelector('div#card-container')
+const buttonContainer = document.querySelector('div#button-options')
 const createBtn= document.querySelector('button#create-btn')
 const createForm= document.querySelector('form#create-form')
 const findBtn= document.querySelector('button#find-btn')
 const findForm= document.querySelector('form#find-form')
 const findInput = document.getElementById('find-input')
-
 const randomBtn= document.querySelector('button#random-btn')
 
+
 getAllDrinks()
-    //     starContainer.innerHTML = "<span class='fa fa-star checked' id='star1'></span> <span class='fa fa-star unchecked'  id='star2'></span> <span class='fa fa-star unchecked'  id='star3'></span> <span class='fa fa-star unchecked'  id='star4'></span> <span class='fa fa-star unchecked' id='star5'></span>"
 
 function getAllDrinks(){
     fetch('http://localhost:3000/api/drinks')
@@ -20,19 +21,6 @@ function getDrink(id){
     fetch('http://localhost:3000/api/drinks/' + id)
     .then(res => res.json())
     .then(console.log)
-}
-
-function searchFor() {
-    let filter = findInput.value.toUpperCase();
-    let scene = cardContainer.getElementsByClassName("scene")
-    for (let i = 0; i < scene.length; i++) {
-        let name = scene[i].dataset.name;
-        if (name.toUpperCase().indexOf(filter) > -1) {
-            scene[i].style.display = "";
-        } else {
-            scene[i].style.display = "none";
-        }
-    }
 }
 
 function addDrink(drink){
@@ -131,59 +119,70 @@ function addDrink(drink){
     })
 }
 
-findBtn.addEventListener('click', () => {
-    createForm.reset()
-    document.getElementById("create-form").style.display = "none"
-    let x = document.getElementById("find-form")
-    x.querySelector('input').value = ""
-    searchFor()
-    if (x.style.display === "none") {
-      x.style.display = "block"
-    } else {
-      x.style.display = "none"
+nav.addEventListener('click', ()=> {
+    let directoryPage = document.querySelector('div#directory')
+    let homePage = document.querySelector('div#home')
+    let loginPage = document.querySelector('div#login')
+    if (event.target.innerText == "DIRECTORY"){
+        homePage.style.display = "none"
+        loginPage.style.display = "none"
+        directoryPage.style.display = "block" 
+        clearInputs("find-form")  
+        clearInputs("create-form")
+        getBtnOptions()
+    }
+    else if (event.target.innerText == "HOME"){
+        loginPage.style.display = "none"
+        directoryPage.style.display = "none"
+        homePage.style.display = "block"
+    }
+    else if (event.target.innerText == "LOGIN"){
+        directoryPage.style.display = "none"
+        homePage.style.display = "none"
+        loginPage.style.display = "block"
     }
 })
 
-createBtn.addEventListener('click', () => {
-    findInput.value = ""
-    document.getElementById("find-form").style.display = "none"
-    let x = document.getElementById("create-form")
+buttonContainer.addEventListener('click', ()=> {
+    if (event.target.id == "find-btn"){
+        createForm.style.display = "none"
+        buttonContainer.style.display = "none"
+        findForm.style.display = "block"
+    }
+    else if (event.target.id == "create-btn"){
+        buttonContainer.style.display = "none"
+        findForm.style.display = "none"
+        createForm.style.display = "block"
+    }
+})
+
+function getBtnOptions(){
+    findForm.style.display = "none"
+    createForm.style.display = "none"
+    buttonContainer.style.display = "flex"
+}
+
+function clearInputs(formId){
+    let x = document.getElementById(formId)
     let inputs = x.querySelectorAll("input")
     inputs.forEach(i => {i.value = ""})
-    // for (let i = 0; i < inputs.length - 1; i++){
-    //     inputs[i].value = ""
-    //   }
-    if (x.style.display === "none") {
-      x.style.display = "block"
-    } else {
-      x.style.display = "none"
-    }
-})
+}
 
-createForm.addEventListener('submit', ()=> {
-    event.preventDefault()
-    console.log('hi')
-    debugger
-    const configObj= {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json'
-          },
-        body: JSON.stringify({
-            name: event.target.querySelectorAll('input')[0].value,
-            ingredients: event.target.querySelectorAll('input')[1].value,
-            // direction: event.target.querySelectorAll('input')[2].value,
-            glass: event.target.querySelectorAll('input')[3].value,
-            image: event.target.querySelectorAll('input')[4].value
-        })
+function searchFor() {
+    let filter = findInput.value.toUpperCase();
+    let scene = cardContainer.getElementsByClassName("scene")
+    for (let i = 0; i < scene.length; i++) {
+        let name = scene[i].dataset.name;
+        if (name.toUpperCase().indexOf(filter) > -1) {
+            scene[i].style.display = "";
+        } else {
+            scene[i].style.display = "none";
+        }
     }
-    fetch('http://localhost:3000/api/drinks', configObj)
-    .then(res => res.json())
-    .then(drinks => drinks.forEach(addDrink))
-})
+}
 
-function clearInput(){
-    let x = document.getElementById("find-form")
-    x.querySelector('input').value = ""
+function clearForms(formId){
+    getBtnOptions() 
+    clearInputs(formId)
     searchFor()
 }

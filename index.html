@@ -20,33 +20,40 @@
             </ul>
         </div>
        <div class= "main" id="main">
-           <div id="directory">
+           <div id="home" style="display: block;">
+               <!-- <h1>HOME PAGE</h1> -->
+           </div>
+           <div id="directory" style="display: none;">
                <div id= "button-options">
-                    <div><button class= "btn-option" id= "find-btn" type="submit" onClick="return false"><i class="fa fa-search"></i> Find A Recipe!</button></div>
-                    <div><button class= "btn-option" id= "create-btn" type="submit" onClick="return false;"> <i class= "fa fa-pencil-square-o"></i> Create One!</button></div>
-                    <div><button class= "btn-option" id= "random-btn" type="submit" onClick="return false;"><i class="fa fa-paper-plane"></i> Feeling Adventurous!</button></div>       
+                    <div><button class= "btn-option" id="find-btn" type="submit" onClick="return false;"><i class="fa fa-search"></i> Find A Recipe</button></div>
+                    <div><button class= "btn-option" id="create-btn" type="submit" onClick="return false;"> <i class= "fa fa-pencil-square-o"></i> Create One</button></div>
+                    <div><button class= "btn-option" id="random-btn" type="submit" onClick="return false;"><i class="fa fa-paper-plane"></i> Feeling Adventurous</button></div>       
                </div>
               
                <div id= "form-container"> 
                     <form class= "form-options" id="find-form" style="display: none;">
-                        <br>
                         <i class="fa fa-search"></i>
                         <input type="text" id="find-input" oninput="searchFor()" placeholder="What are you looking for?">
-                        <i onclick= 'clearInput()' class="fa fa-times-circle hide"></i>
+                        <i onclick= 'clearInputs("find-form"); searchFor()' class="fa fa-times-circle"></i>
+                        <br> <br>
+                        <button class="half-btn" type="submit" onclick="clearForms('find-form'); return false;"><i class="fa fa-hand-o-left"></i> Back </button>
                     </form>
                     <form class= "form-options" id="create-form" style="display: none;">
-                        <h3>Create a New Drink!</h3>
                         <input type="text" placeholder="Name"><br>
                         <input type="text" placeholder="Ingredient"><br>
                         <input type="text" placeholder="Direction"><br>
                         <input type="text" placeholder="Glass"><br>
                         <input type="text" placeholder="Image URL"><br>
-                        <button type="submit">Create</button>
+                        <button class="half-btn" type="submit" onclick="clearForms('create-form'); return false;"><i class="fa fa-hand-o-left"></i> Back </button>
+                        <button class="half-btn" type="submit">Create</button>
                     </form>
                 </div>
                <div id="card-container">
                </div>
            </div>
+           <div id="login" style="display: none;">
+            <h1>LOGIN PAGE</h1>
+        </div>
        </div>
        <div class="footer">
         <p> FOOTER </p>
