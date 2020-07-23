@@ -1,3 +1,12 @@
+const cardContainer = document.querySelector('div#card-container')
+const createBtn= document.querySelector('button#create-btn')
+const createForm= document.querySelector('form#create-form')
+const findBtn= document.querySelector('button#find-btn')
+const findForm= document.querySelector('form#find-form')
+const findInput = document.getElementById('find-input')
+
+const randomBtn= document.querySelector('button#random-btn')
+
 getAllDrinks()
     //     starContainer.innerHTML = "<span class='fa fa-star checked' id='star1'></span> <span class='fa fa-star unchecked'  id='star2'></span> <span class='fa fa-star unchecked'  id='star3'></span> <span class='fa fa-star unchecked'  id='star4'></span> <span class='fa fa-star unchecked' id='star5'></span>"
 
@@ -13,11 +22,26 @@ function getDrink(id){
     .then(console.log)
 }
 
+function searchFor() {
+    let filter = findInput.value.toUpperCase();
+    let scene = cardContainer.getElementsByClassName("scene")
+    for (let i = 0; i < scene.length; i++) {
+        let name = scene[i].dataset.name;
+        if (name.toUpperCase().indexOf(filter) > -1) {
+            scene[i].style.display = "";
+        } else {
+            scene[i].style.display = "none";
+        }
+    }
+}
+
 function addDrink(drink){
-    const cardContainer = document.querySelector('div#card-container')
    
     const scene = document.createElement('div')
         scene.className = 'scene'
+        scene.dataset.id = drink.id
+        scene.dataset.name = drink.name
+
     const card = document.createElement('div')
         card.className = 'card'
         card.dataset.id = drink.id
@@ -53,15 +77,31 @@ function addDrink(drink){
         back.classList = "card__face card__face--back"
     const bName = document.createElement('h2')
         bName.innerText = drink.name
-    const listDiv = document.createElement('div')
-    const ingredientH = document.createElement('h3')
-        ingredientH.innerText = "Ingredients"
-    listDiv.append(ingredientH)
-        drink.ingredients.forEach(i => {
-            const pList = document.createElement('li')
-            pList.innerText = i.name
-            listDiv.append(pList)
-        })
+    // const listDiv = document.createElement('div')
+    // const ingredientH = document.createElement('h3')
+    //     ingredientH.innerText = "Ingredients"
+    // listDiv.append(ingredientH)
+    //     drink.ingredients.forEach(i => {
+    //         const pList = document.createElement('li')
+    //         pList.innerText = i.name
+    //         listDiv.append(pList)
+    //     })
+
+    const table = document.createElement('table')
+    const tableHead= document.createElement('tr')
+    tableHead.innerHTML = "<th><h3>Ingredient</h3></th><th><h3>Amount</h3></th>"
+
+    for (let i = 0; i < drink.ingredients.length; i++){
+        const tr= document.createElement('tr')
+        const tdIngre =  document.createElement('td')
+            tdIngre.innerText = drink.ingredients[i].name
+        const tdMeasurement =  document.createElement('td')
+            tdMeasurement.innerText = drink.drink_ingredients[i].measurement ? drink.drink_ingredients[i].measurement : "N/A"
+        tr.append(tdIngre, tdMeasurement)
+        table.append(tr)
+    }
+    table.prepend(tableHead)
+
     const directionH = document.createElement('h3')
         directionH.innerText = 'Direction:'
     const directionD = document.createElement('p')   
@@ -73,7 +113,7 @@ function addDrink(drink){
     const btn = document.createElement('button')
         btn.innerText = "click"
         btn.className = 'save'
-    back.append(bName, listDiv, directionH, directionD, glassH, glassD, btn)
+    back.append(bName, table, directionH, directionD, glassH, glassD, btn)
 
     card.append(front, back)
     scene.append(card)
@@ -91,4 +131,59 @@ function addDrink(drink){
     })
 }
 
-function getBtnOption()
+findBtn.addEventListener('click', () => {
+    createForm.reset()
+    document.getElementById("create-form").style.display = "none"
+    let x = document.getElementById("find-form")
+    x.querySelector('input').value = ""
+    searchFor()
+    if (x.style.display === "none") {
+      x.style.display = "block"
+    } else {
+      x.style.display = "none"
+    }
+})
+
+createBtn.addEventListener('click', () => {
+    findInput.value = ""
+    document.getElementById("find-form").style.display = "none"
+    let x = document.getElementById("create-form")
+    let inputs = x.querySelectorAll("input")
+    inputs.forEach(i => {i.value = ""})
+    // for (let i = 0; i < inputs.length - 1; i++){
+    //     inputs[i].value = ""
+    //   }
+    if (x.style.display === "none") {
+      x.style.display = "block"
+    } else {
+      x.style.display = "none"
+    }
+})
+
+createForm.addEventListener('submit', ()=> {
+    event.preventDefault()
+    console.log('hi')
+    debugger
+    const configObj= {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+          },
+        body: JSON.stringify({
+            name: event.target.querySelectorAll('input')[0].value,
+            ingredients: event.target.querySelectorAll('input')[1].value,
+            // direction: event.target.querySelectorAll('input')[2].value,
+            glass: event.target.querySelectorAll('input')[3].value,
+            image: event.target.querySelectorAll('input')[4].value
+        })
+    }
+    fetch('http://localhost:3000/api/drinks', configObj)
+    .then(res => res.json())
+    .then(drinks => drinks.forEach(addDrink))
+})
+
+function clearInput(){
+    let x = document.getElementById("find-form")
+    x.querySelector('input').value = ""
+    searchFor()
+}
