@@ -56,3 +56,18 @@ function clearInput(){
     x.querySelector('input').value = ""
     searchFor()
 }
+
+cardContainer.innerHTML = ""
+fetch('http://localhost:3000/api/drinks')
+    .then(res => res.json())
+    .then(drinks => {addDrink(randomElement(drinks))})
+
+    const listDiv = document.createElement('div')
+    const ingredientH = document.createElement('h3')
+        ingredientH.innerText = "Ingredients"
+    listDiv.append(ingredientH)
+        drink.ingredients.forEach(i => {
+            const pList = document.createElement('li')
+            pList.innerText = i.name
+            listDiv.append(pList)
+        })

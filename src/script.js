@@ -1,5 +1,6 @@
 const nav = document.querySelector('ul.nav')
 const cardContainer = document.querySelector('div#card-container')
+const scenes = cardContainer.children
 const buttonContainer = document.querySelector('div#button-options')
 const createBtn= document.querySelector('button#create-btn')
 const createForm= document.querySelector('form#create-form')
@@ -7,6 +8,7 @@ const findBtn= document.querySelector('button#find-btn')
 const findForm= document.querySelector('form#find-form')
 const findInput = document.getElementById('find-input')
 const randomBtn= document.querySelector('button#random-btn')
+const randomForm= document.querySelector('form#random-form')
 
 
 getAllDrinks()
@@ -65,15 +67,7 @@ function addDrink(drink){
         back.classList = "card__face card__face--back"
     const bName = document.createElement('h2')
         bName.innerText = drink.name
-    // const listDiv = document.createElement('div')
-    // const ingredientH = document.createElement('h3')
-    //     ingredientH.innerText = "Ingredients"
-    // listDiv.append(ingredientH)
-    //     drink.ingredients.forEach(i => {
-    //         const pList = document.createElement('li')
-    //         pList.innerText = i.name
-    //         listDiv.append(pList)
-    //     })
+    
 
     const table = document.createElement('table')
     const tableHead= document.createElement('tr')
@@ -130,6 +124,7 @@ nav.addEventListener('click', ()=> {
         clearInputs("find-form")  
         clearInputs("create-form")
         getBtnOptions()
+        unhideCards()
     }
     else if (event.target.innerText == "HOME"){
         loginPage.style.display = "none"
@@ -145,21 +140,28 @@ nav.addEventListener('click', ()=> {
 
 buttonContainer.addEventListener('click', ()=> {
     if (event.target.id == "find-btn"){
-        createForm.style.display = "none"
         buttonContainer.style.display = "none"
         findForm.style.display = "block"
     }
     else if (event.target.id == "create-btn"){
         buttonContainer.style.display = "none"
-        findForm.style.display = "none"
         createForm.style.display = "block"
+    }
+    else if (event.target.id == "random-btn"){
+        changeIcon()
+        getRandomDrink()
+        // buttonContainer.style.display = "none"
+        // randomForm.style.display = "block" 
     }
 })
 
 function getBtnOptions(){
     findForm.style.display = "none"
     createForm.style.display = "none"
+    randomForm.style.display = "none"
     buttonContainer.style.display = "flex"
+    randomBtn.querySelector("i").className = "fa fa-paper-plane"
+
 }
 
 function clearInputs(formId){
@@ -186,3 +188,83 @@ function clearForms(formId){
     clearInputs(formId)
     searchFor()
 }
+
+function getRandomDrink(){
+    fetch('http://localhost:3000/api/drinks')
+        .then(res=> res.json())
+        .then(drinks => hideCardsExcept(randomElement(drinks)))
+        .then(() => {
+            buttonContainer.style.display = "none"
+            randomForm.style.display = "block"
+        })
+}
+
+function randomElement(arr){
+    return arr[Math.floor(Math.random() * arr.length)]
+} 
+
+function hideCardsExcept(card){
+    for (let i = 0; i < scenes.length ; i++){
+        if (card.id != scenes[i].dataset.id){
+            scenes[i].style.display = "none"
+        }
+        else if (card.id == scenes[i].dataset.id){
+            scenes[i].style.display = ""
+        }
+    }
+}
+
+function unhideCards(){
+    for (let i = 0; i < scenes.length ; i++){
+        scenes[i].style.display = ""
+    }
+}
+
+function changeIcon(){
+    if (randomBtn.querySelector("i").className == "fas fa-spinner fa-pulse"){
+        randomBtn.querySelector("i").className = "fa fa-paper-plane"
+    }
+    else if (randomBtn.querySelector("i").className == "fa fa-paper-plane"){
+        randomBtn.querySelector("i").className = "fas fa-spinner fa-pulse"
+    }
+    // else if (randomBtn.querySelector("i").className == "fa fa-refresh"){
+    //     randomBtn.querySelector("i").className = "fas fa-sync fa-spin"
+    // }
+    // else if (randomBtn.querySelector("i").className == "fas fa-sync fa-spin"){
+    //     randomBtn.querySelector("i").className = "fa fa-refresh"
+    // }
+}
+
+createForm.addEventListener('submit', () => {
+    event.preventDefault()
+    console.log('hi')
+    debugger
+    
+    const radioBtns = document.querySelectorAll('input.radio')
+    function containsAlcohol(){
+        if (radioBtns[0].checked === true){
+            return true
+        }
+        else {
+            return false
+        }
+    }
+    
+    const configObj= {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+          },
+        body: JSON.stringify({
+            name: event.target.querySelectorAll('input')[0].value,
+            ingredients: event.target.querySelectorAll('input')[1].value,
+            // direction: event.target.querySelectorAll('input')[2].value,
+            glass: event.target.querySelectorAll('input')[3].value,
+            image: event.target.querySelectorAll('input')[4].value,
+            alcoholic: containsAlcohol()
+        })
+    }
+    fetch('http://localhost:3000/api/drinks', configObj)
+    .then(res => res.json())
+    .then(drinks => drinks.forEach(addDrink))
+})

@@ -4,13 +4,14 @@
   <title>basic.html</title>
   <link rel="stylesheet" href="css/styles.css" type= "text/css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
   <meta charset = "UTF-8" />
 </head>
 <body>
     <div id="site-wrap">
         <div class="header">
            <ul class="logo">
-                <li><img src="image/logo_designs/Cocktail002-512.png" class="logo" alt="logo"></li>
+                <li><img src="image/logo_designs/one.png" class="logo" alt="logo"></li>
                 <li><h1>MIXOLOGY</h1></li>
            </ul>
             <ul class ="nav">
@@ -21,7 +22,7 @@
         </div>
        <div class= "main" id="main">
            <div id="home" style="display: block;">
-               <!-- <h1>HOME PAGE</h1> -->
+               <h1>HOME PAGE</h1>
            </div>
            <div id="directory" style="display: none;">
                <div id= "button-options">
@@ -44,8 +45,19 @@
                         <input type="text" placeholder="Direction"><br>
                         <input type="text" placeholder="Glass"><br>
                         <input type="text" placeholder="Image URL"><br>
+                        <div class="switch-field">
+                            <label> Has Alcoholic? </label>
+                            <input type="radio" id="radio-one" name="switch-one" class= "radio" value="true" checked/>
+                            <label for="radio-one">Yes</label>
+                            <input type="radio" id="radio-two" name="switch-one" class= "radio" value="false" />
+                            <label for="radio-two">No</label>
+                        </div><br>                    
                         <button class="half-btn" type="submit" onclick="clearForms('create-form'); return false;"><i class="fa fa-hand-o-left"></i> Back </button>
                         <button class="half-btn" type="submit">Create</button>
+                    </form>
+                    <form class= "form-options" id="random-form" style="display: none;">
+                        <button class="half-btn" type="submit" onclick="unhideCards(); changeIcon();  Options(); return false;"><i class="fa fa-hand-o-left"></i> Back </button>
+                        <button class="half-btn" type="submit" onclick="getRandomDrink(); return false;"><i class="fa fa-refresh"></i> Retry </button>
                     </form>
                 </div>
                <div id="card-container">
