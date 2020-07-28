@@ -1,5 +1,6 @@
 const nav = document.querySelector('ul.nav')
 const cardContainer = document.querySelector('div#card-container')
+const formContainer = document.querySelector('div#form-container')
 const scenes = cardContainer.children
 const buttonContainer = document.querySelector('div#button-options')
 const createBtn= document.querySelector('button#create-btn')
@@ -9,9 +10,23 @@ const findForm= document.querySelector('form#find-form')
 const findInput = document.getElementById('find-input')
 const randomBtn= document.querySelector('button#random-btn')
 const randomForm= document.querySelector('form#random-form')
+const signupBtn = document.querySelector('button#signup')
+const signupBackBtn = document.querySelector('button#su-back')
 
 
 getAllDrinks()
+
+signupBtn.addEventListener('click', () => {
+    document.querySelector('div.intro-container').style.display ='none'
+    document.querySelector('div.signup').style.display ='block'
+})
+
+signupBackBtn.addEventListener('click', () => {
+    document.querySelector('div.intro-container').style.display ='block'
+    document.querySelector('div.signup').style.display ='none'
+    clearForms('signup-form')
+})
+
 
 function getAllDrinks(){
     fetch('http://localhost:3000/api/drinks')
@@ -70,6 +85,7 @@ function addDrink(drink){
     
 
     const table = document.createElement('table')
+        table.dataset.id = drink.id
     const tableHead= document.createElement('tr')
     tableHead.innerHTML = "<th><h3>Ingredient</h3></th><th><h3>Amount</h3></th>"
 
@@ -99,7 +115,7 @@ function addDrink(drink){
 
     card.append(front, back)
     scene.append(card)
-    cardContainer.append(scene)
+    cardContainer.prepend(scene)
 
     card.addEventListener('click', function() {
         if (event.target.className !== 'save'){
@@ -130,6 +146,9 @@ nav.addEventListener('click', ()=> {
         loginPage.style.display = "none"
         directoryPage.style.display = "none"
         homePage.style.display = "block"
+        document.querySelector('div.intro-container').style.display ='block'
+        document.querySelector('div.signup').style.display ='none'
+        clearForms('signup-form')
     }
     else if (event.target.innerText == "LOGIN"){
         directoryPage.style.display = "none"
@@ -145,13 +164,12 @@ buttonContainer.addEventListener('click', ()=> {
     }
     else if (event.target.id == "create-btn"){
         buttonContainer.style.display = "none"
+        newImField()
         createForm.style.display = "block"
     }
     else if (event.target.id == "random-btn"){
         changeIcon()
-        getRandomDrink()
-        // buttonContainer.style.display = "none"
-        // randomForm.style.display = "block" 
+        getRandomDrink() 
     }
 })
 
@@ -161,7 +179,6 @@ function getBtnOptions(){
     randomForm.style.display = "none"
     buttonContainer.style.display = "flex"
     randomBtn.querySelector("i").className = "fa fa-paper-plane"
-
 }
 
 function clearInputs(formId){
@@ -227,21 +244,102 @@ function changeIcon(){
     else if (randomBtn.querySelector("i").className == "fa fa-paper-plane"){
         randomBtn.querySelector("i").className = "fas fa-spinner fa-pulse"
     }
-    // else if (randomBtn.querySelector("i").className == "fa fa-refresh"){
-    //     randomBtn.querySelector("i").className = "fas fa-sync fa-spin"
-    // }
-    // else if (randomBtn.querySelector("i").className == "fas fa-sync fa-spin"){
-    //     randomBtn.querySelector("i").className = "fa fa-refresh"
-    // }
 }
 
+function createDatalist(){
+    const datalist = document.createElement("datalist")
+    datalist.id = "ingredientList" 
+    fetch('http://localhost:3000/api/ingredients')
+    .then(res => res.json())
+    .then(ingredients => ingredients.forEach(ingredient => {
+        const option = document.createElement('option')
+        option.value = ingredient.name
+        option.dataset.id = ingredient.id
+        datalist.append(option)
+    }))
+    return datalist
+}
+
+ function newImField(){
+    createDatalist()
+    document.querySelector('div.im-container').innerHTML = ""
+    const br1 = document.createElement("br")
+    const br2 = document.createElement("br")
+    const div = document.createElement('div')
+        div.className = "im-field"
+    const ingredient = document.createElement("input")
+        ingredient.placeholder = "Ingredient"
+        ingredient.className = "ingredient"
+        ingredient.type = 'text'
+        ingredient.setAttribute('list', createDatalist().id)
+        ingredient.append(createDatalist())
+        ingredient.dataset.id = ""
+        ingredient.addEventListener('change', () => {
+            ingredient.dataset.id = ""
+            const options = document.querySelectorAll('option')
+            for (let i = 0; i < options.length; i++){
+                if (options[i].value == ingredient.value){
+                    ingredient.dataset.id = options[i].dataset.id
+                }
+            }
+        })
+    const measurement = document.createElement("input")
+        measurement.placeholder = "Measurement"
+        measurement.className = "measurement"
+    const btn = document.createElement('button')
+    btn.className = 'circle-btn'
+    btn.innerHTML = "<i class='fa fa-plus'></i>"
+    btn.addEventListener("click", () => {
+        event.preventDefault()
+        addIngredientField()
+    })
+    div.append(ingredient, br1, measurement, br2, btn,)
+    document.querySelector('div.im-container').append(div)
+}
+
+ function addIngredientField(){
+    createDatalist()
+    const imContainer = document.querySelector("div.im-container")
+    const div = document.createElement("div")
+        div.className = "im-field"
+    const ingredient = document.createElement("input")
+        ingredient.placeholder = "Ingredient"
+        ingredient.className = "ingredient"
+        ingredient.type = 'text'
+        ingredient.setAttribute('list', createDatalist().id)
+        ingredient.append(createDatalist())
+        ingredient.dataset.id = ""
+        ingredient.addEventListener('change', () => {
+            ingredient.dataset.id = ""
+            const options = document.querySelectorAll('option')
+            for (let i = 0; i < options.length; i++){
+                if (options[i].value == ingredient.value){
+                    ingredient.dataset.id = options[i].dataset.id
+                }
+            }
+        })
+    const measurement = document.createElement("input")
+        measurement.placeholder = "Measurement"
+        measurement.className = "measurement"
+    const trashBtn= document.createElement("button")
+        trashBtn.className = "circle-btn"
+        trashBtn.innerHTML = "<i class='fa fa-trash'>"
+    trashBtn.addEventListener('click', ()=> {
+        event.preventDefault()
+        imContainer.removeChild(event.currentTarget.parentElement)
+    })
+
+    div.append(ingredient, measurement, trashBtn)
+    imContainer.append(div)
+}
+ 
 createForm.addEventListener('submit', () => {
     event.preventDefault()
-    console.log('hi')
-    debugger
+    const ingredients = document.querySelectorAll('input.ingredient')
+    const measurement = document.querySelectorAll('input.measurement') 
     
-    const radioBtns = document.querySelectorAll('input.radio')
     function containsAlcohol(){
+        const radioBtns = document.querySelectorAll('input.radio')
         if (radioBtns[0].checked === true){
             return true
         }
@@ -250,21 +348,77 @@ createForm.addEventListener('submit', () => {
         }
     }
     
-    const configObj= {
+    fetch('http://localhost:3000/api/drinks', {
         method: "POST",
         headers: {
             'Content-Type': 'application/json'
-          },
+        },
         body: JSON.stringify({
-            name: event.target.querySelectorAll('input')[0].value,
-            ingredients: event.target.querySelectorAll('input')[1].value,
-            // direction: event.target.querySelectorAll('input')[2].value,
-            glass: event.target.querySelectorAll('input')[3].value,
-            image: event.target.querySelectorAll('input')[4].value,
+            name: event.target.querySelector('input#ci-name').value,
+            direction: event.target.querySelector('input#ci-direction').value,
+            image: event.target.querySelector('input#ci-image').value,
+            glass: event.target.querySelector('input#ci-glass').value,
             alcoholic: containsAlcohol()
         })
-    }
-    fetch('http://localhost:3000/api/drinks', configObj)
+     })
     .then(res => res.json())
-    .then(drinks => drinks.forEach(addDrink))
+    .then(drink => {
+        findOrAddIngre(drink)
+        addDrink(drink)  
+        clearForms(createForm)
+    })
+
+    function findOrAddIngre(drink){
+        for (let i = 0; i < ingredients.length; i++){
+            if(ingredients[i].dataset.id == ""){
+                createI(ingredients[i].value, measurement[i].value, drink)
+            }
+            else {
+                fetch('http://localhost:3000/api/ingredients/' + ingredients[i].dataset.id)
+                .then(res => res.json())
+                .then(ingredient => createDI(ingredient, measurement[i].value, drink))
+            }
+        }
+    }
+
+    function createI(ingredientName, measurement, drink){
+        fetch('http://localhost:3000/api/ingredients', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: ingredientName
+            })
+         })
+         .then(res => res.json())
+         .then(ingre => createDI(ingre, measurement, drink))
+    }
+
+    function createDI(ingredient, measurement, drink){
+        fetch('http://localhost:3000/api/drink_ingredients', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                drink_id: drink.id,
+                measurement: measurement,
+                ingredient_id: ingredient.id
+            })
+         })
+         .then(res => res.json())
+         .then(di => {
+             let foundDrink = document.querySelector(`table[data-id='${drink.id}']`)
+             const tr = document.createElement('tr')
+             const item = document.createElement('td')
+                item.innerText = ingredient.name
+             const amount = document.createElement('td')
+                amount.innerText = measurement
+            tr.append(item, amount)
+            foundDrink.append(tr)
+
+         })
+    }
+    
 })

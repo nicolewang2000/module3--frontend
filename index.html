@@ -17,12 +17,29 @@
             <ul class ="nav">
                 <li class= "active">Home</li>
                 <li>Directory</li>
-                <li>Login</li>
+                <li>Login </li>
             </ul>
         </div>
        <div class= "main" id="main">
            <div id="home" style="display: block;">
-               <h1>HOME PAGE</h1>
+                <div class="intro-container">
+                    <div class='intro'>
+                        <h2>Sharing, Experimenting, & Learning </h2>
+                        <h1>Mixology</h1>
+                        <hr>
+                        <p> Mixology is a platform built for people passionate about creating drinks and discovering new ones. From smoothies to lattes and mocktails to cocktails, we have it all! Sign up now to start exploring. </p>
+                        <button class="half-btn" id='signup'> Sign Up <i class="fa fa-user-plus"></i></button> 
+                    </div>
+                    <img src="image/splash.png">
+                </div>
+                <div class="signup" style="display: none;">
+                    <form id='signup-form'>
+                        <input class=full id="su-name" type="text" placeholder="Name"><br>
+                        <input class=full id="su-username" type="text" placeholder="Username"><br>
+                        <button class="half-btn" id='su-back' type="submit"><i class="fa fa-hand-o-left"></i> Back </button>
+                        <button class="half-btn" id='su-create' type="submit">Create <i class="fa fa-user-plus"></i></button>
+                    </form>
+                </div>
            </div>
            <div id="directory" style="display: none;">
                <div id= "button-options">
@@ -34,29 +51,36 @@
                <div id= "form-container"> 
                     <form class= "form-options" id="find-form" style="display: none;">
                         <i class="fa fa-search"></i>
-                        <input type="text" id="find-input" oninput="searchFor()" placeholder="What are you looking for?">
+                        <input class= "full" type="text" id="find-input" oninput="searchFor()" placeholder="What are you looking for?">
                         <i onclick= 'clearInputs("find-form"); searchFor()' class="fa fa-times-circle"></i>
                         <br> <br>
                         <button class="half-btn" type="submit" onclick="clearForms('find-form'); return false;"><i class="fa fa-hand-o-left"></i> Back </button>
+
                     </form>
                     <form class= "form-options" id="create-form" style="display: none;">
-                        <input type="text" placeholder="Name"><br>
-                        <input type="text" placeholder="Ingredient"><br>
-                        <input type="text" placeholder="Direction"><br>
-                        <input type="text" placeholder="Glass"><br>
-                        <input type="text" placeholder="Image URL"><br>
+                        <input class=full id="ci-name" type="text" placeholder="Name"><br>
                         <div class="switch-field">
-                            <label> Has Alcoholic? </label>
+                            <label> Have Alcohol? </label>
                             <input type="radio" id="radio-one" name="switch-one" class= "radio" value="true" checked/>
                             <label for="radio-one">Yes</label>
                             <input type="radio" id="radio-two" name="switch-one" class= "radio" value="false" />
                             <label for="radio-two">No</label>
-                        </div><br>                    
+                        </div>   
+                        <div class="im-container">
+                            <!-- <div class=im-field>
+                                <input type="text" placeholder="Ingredient"><br>
+                                <input type="text" placeholder="Measurement"><br>
+                                <button class="circle-btn" type="submit" onclick="addIngredientField(); return false;"><i class="fa fa-plus"></i></button>
+                            </div> -->
+                        </div> 
+                        <input class=full id="ci-direction" type="text" placeholder="Direction"><br>
+                        <input class=full id="ci-glass" type="text" placeholder="Glass"><br>
+                        <input class=full id="ci-image" type="text" placeholder="Image URL"><br>                
                         <button class="half-btn" type="submit" onclick="clearForms('create-form'); return false;"><i class="fa fa-hand-o-left"></i> Back </button>
                         <button class="half-btn" type="submit">Create</button>
                     </form>
                     <form class= "form-options" id="random-form" style="display: none;">
-                        <button class="half-btn" type="submit" onclick="unhideCards(); changeIcon();  Options(); return false;"><i class="fa fa-hand-o-left"></i> Back </button>
+                        <button class="half-btn" type="submit" onclick="unhideCards(); changeIcon(); getBtnOptions(); return false;"><i class="fa fa-hand-o-left"></i> Back </button>
                         <button class="half-btn" type="submit" onclick="getRandomDrink(); return false;"><i class="fa fa-refresh"></i> Retry </button>
                     </form>
                 </div>
@@ -71,6 +95,6 @@
         <p> FOOTER </p>
        </div>
     </div>
-    <script src="src/script.js"></script>
+    <script type = "text/javascript" src="src/script.js"></script> 
 </body>
 </html>
