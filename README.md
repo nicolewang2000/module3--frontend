@@ -4,7 +4,7 @@ MIXOLOGY is a simple web-based platform for sharing, discovering, and creating d
 
 ## Setup
 
-* BOOKCLUB! runs on Ruby 2.6.1 and Rails 6.0.3.2.
+* MIXOLOGY! runs on Ruby 2.6.1 and Rails 6.0.3.2.
 
 * If you would like to run this on your local Rails server: fork/clone both `module3--frontend` and `module3--backend`. On `module3--frontend`, `bundle install`, `rails db:migrate`, `rails db:seed` to seed the database with some sample users and groups, then `rails s` to start the local server. One thing to note: if `rails db:migrate` does not seem to be working, type in `rails c` in your terminal to access the console and copy the top half of the seed file first and when that finishes running, copy the bottom half in your console. 
 
