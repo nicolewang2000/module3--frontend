@@ -1,6 +1,6 @@
-# BOOKCLUB!
+# MIXOLOGY!
 
-BOOKCLUB! is a simple web-based platform for sharing, discovering, and creating different drinks.
+MIXOLOGY is a simple web-based platform for sharing, discovering, and creating different drinks.
 
 ## Setup
 
