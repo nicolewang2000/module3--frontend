@@ -32,7 +32,6 @@ createBtn.addEventListener('click', () => {
 createForm.addEventListener('submit', ()=> {
     event.preventDefault()
     console.log('hi')
-    debugger
     const configObj= {
         method: "POST",
         headers: {
@@ -71,7 +70,6 @@ fetch('http://localhost:3000/api/drinks')
             pList.innerText = i.name
             listDiv.append(pList)
         })
-
 
         function newCreateForm(){
           const br1 = document.createElement("br")
@@ -191,3 +189,26 @@ fetch('http://localhost:3000/api/drinks', {
         addDrink(drink)
         clearForms('create-form')
     })
+
+    // const backBtn = document.createElement("button")
+    //     backBtn.innerHTML = "<i class='fa fa-hand-o-left'></i> Back"
+    //     backBtn.className = "half-btn"
+    //     backBtn.style.display = "block"
+    //     cardContainer.append(backBtn)
+
+    //     backBtn.addEventListener('click', () => {
+    //     event.preventDefault()
+    //     getBtnOptions()
+    //     unhideCards()
+    // })
+
+    // hideCardsExcept(drink)
+    // buttonContainer.style.display = "none"
+
+// const starDiv = document.querySelector(`div.rating[data-id='${drink.id}']`)
+    // const inner = starDiv.querySelector('div.stars-inner')
+    // const p = starDiv.querySelector('p')
+    
+    // const avgRating= `${drink.ratings.length ? drink.ratings.reduce((sum,element) => (sum + element.score), 0)/drink.ratings.length : 0}`
+    // inner.style.width = avgRating*100/5 + "%"
+    // p.innerText = `${Math.round(avgRating*100)/100}/5 stars based on ${drink.ratings.length} review(s)`

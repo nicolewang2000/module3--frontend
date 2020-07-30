@@ -71,6 +71,9 @@ li h1{
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 1200 800'%3E%3Cdefs%3E%3CradialGradient id='a' cx='0' cy='800' r='800' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%239d81ec'/%3E%3Cstop offset='1' stop-color='%239d81ec' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='b' cx='1200' cy='800' r='800' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23dc83f4'/%3E%3Cstop offset='1' stop-color='%23dc83f4' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='c' cx='600' cy='0' r='600' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23e85ff3'/%3E%3Cstop offset='1' stop-color='%23e85ff3' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='d' cx='600' cy='800' r='600' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23aca3f0'/%3E%3Cstop offset='1' stop-color='%23aca3f0' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='e' cx='0' cy='0' r='800' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23965fe8'/%3E%3Cstop offset='1' stop-color='%23965fe8' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='f' cx='1200' cy='0' r='800' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23fc60b6'/%3E%3Cstop offset='1' stop-color='%23fc60b6' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect fill='url(%23a)' width='1200' height='800'/%3E%3Crect fill='url(%23b)' width='1200' height='800'/%3E%3Crect fill='url(%23c)' width='1200' height='800'/%3E%3Crect fill='url(%23d)' width='1200' height='800'/%3E%3Crect fill='url(%23e)' width='1200' height='800'/%3E%3Crect fill='url(%23f)' width='1200' height='800'/%3E%3C/svg%3E");
     background-attachment: fixed;
     background-size: cover;
+    background-color: #A770EF;
+    /* background-image: url("/Users/nicolewang/module3--frontend/image/Wave-10s-1440px.png") */
+
 }
 #home {
     color: white;
@@ -134,7 +137,40 @@ hr {
     max-width: 100%;
     object-fit: contain;
 }
-
+div .signup{
+    text-align: center;
+    padding: 0;
+}
+div.image-container{
+    display: flex;
+    justify-content: space-evenly;
+    overflow-x: scroll;
+}
+div.image-container > img {
+    width:300px;
+    height:300px;
+    object-fit: cover;
+    border-radius: 30px;
+}
+div #login {
+    color: white;
+    text-align: center;
+    margin: 0;
+}
+#login img {
+    padding: 0;
+    display: block;
+    margin: 0 auto;
+    height: 100vh;
+    object-fit: contain;
+}
+#login form{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #A770EF;
+}
 .footer{
     grid-area: footer;
     color: white;
@@ -304,7 +340,7 @@ th, td {
     width: 355px;
     height: 450px;
     /* border: 1px solid #CCC; */
-    margin: 40px 40px;
+    margin: 30px 30px;
     perspective: 600px;
 }
 .card {
@@ -332,6 +368,14 @@ th, td {
     background: white;
     color: rgb(74, 92, 194);
 }
+.card__face--front p {
+    line-height: 8px;
+}
+
+.card__face--front h2 {
+    line-height: 25px;
+    margin: 12px;
+}
 .card__face--back {
     background: rgb(74, 92, 194);
     color: white;
@@ -341,4 +385,16 @@ th, td {
     max-width:300px;
     max-height:200px;
     object-fit: contain;
+}
+select {
+    height:30px; 
+    width: 165px;
+    font-size: 16px;
+    border-radius: 25px;
+    margin: 5px;
+    padding-left: 10px;
+    padding-right: 15px;
+}
+div .rate-div {
+    display: inline-flex;
 }

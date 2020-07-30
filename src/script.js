@@ -1,4 +1,7 @@
 const nav = document.querySelector('ul.nav')
+const directoryPage = document.querySelector('div#directory')
+const homePage = document.querySelector('div#home')
+const loginPage = document.querySelector('div#login')
 const cardContainer = document.querySelector('div#card-container')
 const formContainer = document.querySelector('div#form-container')
 const scenes = cardContainer.children
@@ -12,13 +15,20 @@ const randomBtn= document.querySelector('button#random-btn')
 const randomForm= document.querySelector('form#random-form')
 const signupBtn = document.querySelector('button#signup')
 const signupBackBtn = document.querySelector('button#su-back')
+const signupForm = document.querySelector('form#signup-form')
+const ratingForm = document.querySelector('form#edit-rating')
+const loginForm = document.querySelector('form#login-form')
+const log = document.querySelector('li#log')
 
-
-getAllDrinks()
+// JSON.parse(localStorage.getItem('user'))
 
 signupBtn.addEventListener('click', () => {
-    document.querySelector('div.intro-container').style.display ='none'
+    if (log.innerText == "LOGOUT"){
+        alert ('You already have an account')
+    }
+    else {document.querySelector('div.intro-container').style.display ='none'
     document.querySelector('div.signup').style.display ='block'
+    }
 })
 
 signupBackBtn.addEventListener('click', () => {
@@ -27,21 +37,94 @@ signupBackBtn.addEventListener('click', () => {
     clearForms('signup-form')
 })
 
+signupForm.addEventListener('submit', () => {
+    event.preventDefault()
+    fetch('http://localhost:3000/api/users', {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: event.target.querySelectorAll('input')[0].value,
+            username: event.target.querySelectorAll('input')[1].value,
+            password: event.target.querySelectorAll('input')[2].value
+        })
+     })
+    .then(res => res.json())
+    .then(userInfo => {
+        if(userInfo.token){
+            localStorage.token = userInfo.token
+            localStorage.setItem('user', JSON.stringify(userInfo.user))
+            console.log(localStorage)
+            directoryPage.style.display = "none"
+            homePage.style.display = "none"
+            clearForms("signup-form")
+            clearForms('login-form')
+            loginPage.style.display = "block"
+        }
+        else {
+            alert("This username is taken. Try again")
+            clearForms("signup-form")
+        }
+    })
+})
+
+loginForm.addEventListener("submit", () => {
+    event.preventDefault()
+    fetch("http://localhost:3000/api/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            username: event.target[0].value,
+            password: event.target[1].value
+        })
+    })
+    .then(res =>  res.json())
+    .then(userInfo => {
+        if(userInfo.token){
+            localStorage.token = userInfo.token
+            localStorage.setItem('user', JSON.stringify(userInfo.user))
+            console.log(localStorage)
+            getAllDrinks()
+            loginForm.reset()
+            homePage.style.display = "none"
+            loginPage.style.display = "none"
+            directoryPage.style.display = "block" 
+            getBtnOptions()
+            log.innerText = "Logout"
+        }  
+        else {
+            loginForm.reset()
+            alert("Invalid username or password")
+        }
+    })
+})
+
+log.addEventListener("click", () => {
+    if (log.innerText == "LOGOUT"){
+        localStorage.clear()
+        log.innerText = "LOGIN"
+        homePage.style.display = "none"
+        loginPage.style.display = "block"
+        directoryPage.style.display = "none" 
+    }
+})
 
 function getAllDrinks(){
-    fetch('http://localhost:3000/api/drinks')
+    fetch("http://localhost:3000/api/drinks", 
+    {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.token}`
+        } 
+      })
     .then(res => res.json())
     .then(drinks => drinks.forEach(addDrink))
 }
 
-function getDrink(id){
-    fetch('http://localhost:3000/api/drinks/' + id)
-    .then(res => res.json())
-    .then(console.log)
-}
-
 function addDrink(drink){
-   
     const scene = document.createElement('div')
         scene.className = 'scene'
         scene.dataset.id = drink.id
@@ -60,8 +143,9 @@ function addDrink(drink){
         img.src = drink.image
     const p1 = document.createElement('p')
         p1.innerText = `${drink.alcoholic ? 'Contains Alcohol' : 'Non-Alcoholic'}`
-    const p2 = document.createElement('p')
-        p2.innerText = `Number of Ingredients: ${drink.ingredients.length}`
+    const creator = document.createElement('p')
+        creator.innerText = `Created by: ${drink.user.name}`
+
     const starsContainer = document.createElement('div')
     starsContainer.dataset.id = drink.id
     starsContainer.className = "rating"
@@ -74,16 +158,44 @@ function addDrink(drink){
         starsInner.style.width = avgRating*100/5 + "%"
     const totalRatings = document.createElement('p')
     totalRatings.innerText = `${Math.round(avgRating*100)/100}/5 stars based on ${drink.ratings.length} review(s)`
-        
+    
     starsContainer.append(starsOuter, totalRatings)
-    front.append(fName, starsContainer, img, p1, p2)
+
+    const ratingObj = drink.ratings.find(r => r.user_id == JSON.parse(localStorage.getItem('user')).id)
+    const userScore = ratingObj ? ratingObj.score : "N/A"
+    const rate = document.createElement('p')
+        rate.className = "rating"
+        rate.dataset.id = drink.id
+        rate.innerHTML = `Your rating: ${userScore}`
+    const editScore = document.createElement('button')
+        editScore.innerHTML = "<i class='fa fa-edit'></i>"
+        editScore.className = "circle-btn"
+    editScore.addEventListener("click", () => {
+        event.preventDefault()
+        buttonContainer.style.display = "none"
+        ratingForm.style.display = "block"
+        hideCardsExcept(drink)
+        if (ratingObj){
+            editRating(drink, ratingObj.id, ratingObj.score)
+        }
+        else {
+            createRating(drink)
+        }
+    })
+
+    const rateDiv = document.createElement('div')
+    rateDiv.className = "rate-div"
+
+    rateDiv.append(rate, editScore)
+    front.append(fName, starsContainer, img, p1, creator, rateDiv)
+
+    // front.append(fName, starsContainer, img, p1, creator, rate, editScore)
 
     const back = document.createElement('div')
         back.classList = "card__face card__face--back"
     const bName = document.createElement('h2')
         bName.innerText = drink.name
     
-
     const table = document.createElement('table')
         table.dataset.id = drink.id
     const tableHead= document.createElement('tr')
@@ -109,31 +221,117 @@ function addDrink(drink){
     const glassD = document.createElement('p')
         glassD.innerText = drink.glass
     const btn = document.createElement('button')
-        btn.innerText = "click"
-        btn.className = 'save'
-    back.append(bName, table, directionH, directionD, glassH, glassD, btn)
-
+        btn.innerHTML = "Delete <i class='fa fa-trash'>"
+        btn.className = 'half-btn'
+        btn.addEventListener('click', () => {
+            event.preventDefault()
+            deleteDrink(drink)
+        })
+    
+    if (JSON.parse(localStorage.getItem('user')).id == (drink.user.id)){
+        back.append(bName, table, directionH, directionD, glassH, glassD, btn)
+    }
+    else {
+        back.append(bName, table, directionH, directionD, glassH, glassD)
+    }
     card.append(front, back)
     scene.append(card)
     cardContainer.prepend(scene)
 
     card.addEventListener('click', function() {
-        if (event.target.className !== 'save'){
+        if (!(event.target.nodeName == 'BUTTON' || event.target.nodeName == 'I')){
             card.classList.toggle('is-flipped')
         }
     })
+}
 
-    btn.addEventListener('click', () => {
-        event.preventDefault()
-        console.log('click')
+function editStarContainer(drink){
+    fetch('http://localhost:3000/api/ratings/drinks/' + drink.id, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${localStorage.token}` // sending auth token
+    }})
+    .then(res=> res.json())
+    .then(ratings => {
+        const starDiv = document.querySelector(`div.rating[data-id='${drink.id}']`)
+        const inner = starDiv.querySelector('div.stars-inner')
+        const p = starDiv.querySelector('p')
+        const avgRating =  ratings.reduce((sum,element) => (sum + element.score), 0)/ratings.length 
+        inner.style.width = avgRating*100/5 + "%"
+        p.innerText = `${Math.round(avgRating*100)/100}/5 stars based on ${ratings.length} review(s)`
     })
+}
+
+function editRating(drink, ratingId, currentScore){
+    ratingForm.querySelector('select').value = currentScore
+    ratingForm.addEventListener('submit', () =>{
+        event.preventDefault()
+        fetch('http://localhost:3000/api/ratings/' + ratingId, {
+            method: "PATCH",
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.token}` // sending auth token
+            },
+            body: JSON.stringify({
+                score: parseInt(event.target.querySelector('select').value)
+            })
+        })
+        .then(res => res.json())
+        .then(rating => {
+            document.querySelector(`p[data-id='${drink.id}']`).innerText = `Your rating: ${rating.score}`
+            editStarContainer(drink)
+            alert("Change was successful")
+        })
+    })
+    
+}
+
+function createRating(drink){
+    ratingForm.querySelector('select').value = ""
+    ratingForm.addEventListener('submit', () =>{
+        event.preventDefault()
+        fetch('http://localhost:3000/api/ratings', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.token}` // sending auth token
+            },
+            body: JSON.stringify({
+                drink_id: drink.id, 
+                user_id: JSON.parse(localStorage.getItem('user')).id,
+                score: parseInt(event.target.querySelector('select').value)
+            })
+         })
+        .then(res => res.json())
+        .then(rating => {
+            document.querySelector(`p[data-id='${drink.id}']`).innerText = `Your rating: ${rating.score}`
+            editStarContainer(drink)
+            alert("Change was successful")
+        })
+    })
+
+    
+}
+
+function deleteDrink(drink){
+    let foundDrink = document.querySelector(`div[data-id='${drink.id}']`)
+    cardContainer.removeChild(foundDrink)
+
+    fetch('http://localhost:3000/api/drinks/' + drink.id, {
+        method: 'DELETE',
+        headers: {
+            Authorization: `Bearer ${localStorage.token}`,
+            'Content-type': 'application/json'
+        }
+    })
+    .then(res => res.json())
 }
 
 nav.addEventListener('click', ()=> {
     let directoryPage = document.querySelector('div#directory')
     let homePage = document.querySelector('div#home')
     let loginPage = document.querySelector('div#login')
-    if (event.target.innerText == "DIRECTORY"){
+    if (event.target.innerText == "DIRECTORY" &&  log.innerText == "LOGOUT"){
         homePage.style.display = "none"
         loginPage.style.display = "none"
         directoryPage.style.display = "block" 
@@ -141,6 +339,9 @@ nav.addEventListener('click', ()=> {
         clearInputs("create-form")
         getBtnOptions()
         unhideCards()
+    }
+    else if (event.target.innerText == "DIRECTORY" &&  log.innerText == "LOGIN"){
+        alert("Login for access")
     }
     else if (event.target.innerText == "HOME"){
         loginPage.style.display = "none"
@@ -153,6 +354,7 @@ nav.addEventListener('click', ()=> {
     else if (event.target.innerText == "LOGIN"){
         directoryPage.style.display = "none"
         homePage.style.display = "none"
+        clearForms('login-form')
         loginPage.style.display = "block"
     }
 })
@@ -163,8 +365,9 @@ buttonContainer.addEventListener('click', ()=> {
         findForm.style.display = "block"
     }
     else if (event.target.id == "create-btn"){
-        buttonContainer.style.display = "none"
+        clearForms('create-form')
         newImField()
+        buttonContainer.style.display = "none"
         createForm.style.display = "block"
     }
     else if (event.target.id == "random-btn"){
@@ -177,6 +380,8 @@ function getBtnOptions(){
     findForm.style.display = "none"
     createForm.style.display = "none"
     randomForm.style.display = "none"
+    ratingForm.style.display = "none"
+
     buttonContainer.style.display = "flex"
     randomBtn.querySelector("i").className = "fa fa-paper-plane"
 }
@@ -207,13 +412,18 @@ function clearForms(formId){
 }
 
 function getRandomDrink(){
-    fetch('http://localhost:3000/api/drinks')
-        .then(res=> res.json())
-        .then(drinks => hideCardsExcept(randomElement(drinks)))
-        .then(() => {
-            buttonContainer.style.display = "none"
-            randomForm.style.display = "block"
-        })
+    fetch('http://localhost:3000/api/drinks', {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.token}`
+        } 
+      })
+      .then(res=> res.json())
+      .then(drinks => hideCardsExcept(randomElement(drinks)))
+      .then(() => {
+          buttonContainer.style.display = "none"
+          randomForm.style.display = "block"
+      })
 }
 
 function randomElement(arr){
@@ -249,7 +459,12 @@ function changeIcon(){
 function createDatalist(){
     const datalist = document.createElement("datalist")
     datalist.id = "ingredientList" 
-    fetch('http://localhost:3000/api/ingredients')
+    fetch('http://localhost:3000/api/ingredients', {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.token}` // sending auth token
+        } 
+      })
     .then(res => res.json())
     .then(ingredients => ingredients.forEach(ingredient => {
         const option = document.createElement('option')
@@ -351,14 +566,16 @@ createForm.addEventListener('submit', () => {
     fetch('http://localhost:3000/api/drinks', {
         method: "POST",
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.token}` // sending auth token
         },
         body: JSON.stringify({
             name: event.target.querySelector('input#ci-name').value,
             direction: event.target.querySelector('input#ci-direction').value,
             image: event.target.querySelector('input#ci-image').value,
             glass: event.target.querySelector('input#ci-glass').value,
-            alcoholic: containsAlcohol()
+            alcoholic: containsAlcohol(),
+            user_id: JSON.parse(localStorage.getItem('user')).id
         })
      })
     .then(res => res.json())
@@ -374,7 +591,12 @@ createForm.addEventListener('submit', () => {
                 createI(ingredients[i].value, measurement[i].value, drink)
             }
             else {
-                fetch('http://localhost:3000/api/ingredients/' + ingredients[i].dataset.id)
+                fetch('http://localhost:3000/api/ingredients/' + ingredients[i].dataset.id, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${localStorage.token}`
+                    }
+                })
                 .then(res => res.json())
                 .then(ingredient => createDI(ingredient, measurement[i].value, drink))
             }
@@ -385,7 +607,8 @@ createForm.addEventListener('submit', () => {
         fetch('http://localhost:3000/api/ingredients', {
             method: "POST",
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.token}`
             },
             body: JSON.stringify({
                 name: ingredientName
@@ -399,7 +622,8 @@ createForm.addEventListener('submit', () => {
         fetch('http://localhost:3000/api/drink_ingredients', {
             method: "POST",
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.token}`
             },
             body: JSON.stringify({
                 drink_id: drink.id,

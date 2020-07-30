@@ -17,7 +17,7 @@
             <ul class ="nav">
                 <li class= "active">Home</li>
                 <li>Directory</li>
-                <li>Login </li>
+                <li id= "log">Login </li>
             </ul>
         </div>
        <div class= "main" id="main">
@@ -34,11 +34,20 @@
                 </div>
                 <div class="signup" style="display: none;">
                     <form id='signup-form'>
-                        <input class=full id="su-name" type="text" placeholder="Name"><br>
-                        <input class=full id="su-username" type="text" placeholder="Username"><br>
-                        <button class="half-btn" id='su-back' type="submit"><i class="fa fa-hand-o-left"></i> Back </button>
+                        <h1>Create an Account</h1>
+                        <i class="fa fa-font"></i><input class=full id="su-name" name= "name" type="text" placeholder="Name"><br>
+                        <i class="fa fa-user"></i><input class=full id="su-username" name="username" type="text" placeholder="Username"><br>
+                        <i class="fa fa-key"></i> <input class=full id="su-password" name="password" type="password" placeholder="Password"><br><br>
+                        <button class="half-btn" id='su-back' type="submit" onClick="return false;"><i class="fa fa-hand-o-left"></i> Back </button>
                         <button class="half-btn" id='su-create' type="submit">Create <i class="fa fa-user-plus"></i></button>
                     </form>
+                    <br><br>
+                    <div class="image-container">
+                        <img src="https://img1.mashed.com/img/gallery/the-best-cheap-mixed-drinks-to-order-at-a-bar/intro-1571943589.jpg" alt='drink' align="left" >
+                        <img src="https://www.thespruceeats.com/thmb/tSxyPYh37U34ba7sNn_nSvN3lnQ=/2446x2446/smart/filters:no_upscale()/how-to-make-caffe-latte-765372-Hero-5bbe0901c9e77c0026bf07c4.jpg" alt="drink" align="left" >
+                        <img src="https://foodmeanderings.com/wp-content/uploads/2018/12/Shirley-Temple-Drink.jpg" alt="drink" align='left'>
+                        <img src="https://www.dusttexhonolulu.com/wp-content/uploads/2019/06/summer-drinks.jpg" >
+                    </div>
                 </div>
            </div>
            <div id="directory" style="display: none;">
@@ -67,11 +76,6 @@
                             <label for="radio-two">No</label>
                         </div>   
                         <div class="im-container">
-                            <!-- <div class=im-field>
-                                <input type="text" placeholder="Ingredient"><br>
-                                <input type="text" placeholder="Measurement"><br>
-                                <button class="circle-btn" type="submit" onclick="addIngredientField(); return false;"><i class="fa fa-plus"></i></button>
-                            </div> -->
                         </div> 
                         <input class=full id="ci-direction" type="text" placeholder="Direction"><br>
                         <input class=full id="ci-glass" type="text" placeholder="Glass"><br>
@@ -83,16 +87,33 @@
                         <button class="half-btn" type="submit" onclick="unhideCards(); changeIcon(); getBtnOptions(); return false;"><i class="fa fa-hand-o-left"></i> Back </button>
                         <button class="half-btn" type="submit" onclick="getRandomDrink(); return false;"><i class="fa fa-refresh"></i> Retry </button>
                     </form>
+                    <form class= "form-options" id="edit-rating" style="display: none;">
+                        <h2>Select your Rating: </h2>
+                        <select id="score" name="score">
+                            <option value="" disabled selected>Rating</option>
+                            <option value=1>&#9733;</option>
+                            <option value=2>&#9733; &#9733;</option>
+                            <option value=3>&#9733; &#9733; &#9733;</option>
+                            <option value=4>&#9733; &#9733; &#9733; &#9733;</option>
+                            <option value=5>&#9733; &#9733; &#9733; &#9733; &#9733;</option>
+                        </select> <br> <br>
+                          <button class="half-btn" type="submit" onClick="unhideCards(); getBtnOptions(); return false;"><i class="fa fa-hand-o-left"></i> Back </button>
+                          <button class="half-btn" id="edit-or-create" type="submit">Submit</button>
+                    </form>
                 </div>
                <div id="card-container">
                </div>
            </div>
            <div id="login" style="display: none;">
-            <h1>LOGIN PAGE</h1>
-        </div>
-       </div>
+                <form id="login-form">
+                    <h1> Login Here: </h1>
+                    <i class="fa fa-user"></i><input class=full id="login-username" name="username" type="text" placeholder="Username"><br>
+                    <i class="fa fa-key"></i> <input class=full id="login-password" name="password" type="password" placeholder="Password"><br><br>
+                    <button class="half-btn" id='login' type="submit"> Login </button>
+                </form>
+                <img src="image/poster.jpg">
+           </div>
        <div class="footer">
-        <p> FOOTER </p>
        </div>
     </div>
     <script type = "text/javascript" src="src/script.js"></script> 
